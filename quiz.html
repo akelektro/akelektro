@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Elektryczny – AK ELEKTRO</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        color: #222;
+    }
+    header {
+        background: #ffffff;
+        padding: 20px;
+        text-align: center;
+        border-bottom: 3px solid #e00000;
+    }
+    header img {
+        max-width: 260px;
+    }
+    .container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+        text-align: center;
+        color: #003366;
+    }
+    button {
+        padding: 12px 25px;
+        font-size: 18px;
+        background: #003366;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: 0.3s;
+    }
+    button:hover {
+        background: #e00000;
+    }
+    .option { margin: 10px 0; }
+    .good { color: green; font-weight: bold; }
+    .bad { color: red; font-weight: bold; }
+    #progress {
+        text-align: center;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <img src="logo.png" alt="AK ELEKTRO">
+</header>
+
+<div class="container">
+    <h1>Quiz Elektryczny</h1>
+
+    <p id="progress"></p>
+
+    <h2 id="question"></h2>
+    <div id="options"></div>
+
+    <button onclick="nextQuestion()">Dalej</button>
+
+    <h3 id="result"></h3>
+    <div id="summary"></div>
+</div>
+
+<script>
+const allQuestions = [
+    ["Jak obliczyć moc czynną?", ["P = U / R","P = R / U","P = U * I","P = R * I"], 2],
+    ["Prawo Ohma:", ["I = R / U","I = U / R","I = P / U","I = U * R"], 1],
+    ["Jednostka oporu:", ["Om","Wolt","Henr","Amper"], 0],
+    ["AC oznacza:", ["Zwarcie","Prąd przemienny","Impulsowy","Stały"], 1],
+    ["Opór równoległy:", ["1/R = 1/R1 + 1/R2","R = R1 + R2","R = R1 * R2","R = R1 - R2"], 0],
+    ["Natężenie mierzymy w:", ["W","V","Ω","A"], 3],
+    ["Wzór na moc:", ["P = U²/R","P = R/U²","P = U*R","P = R²/U"], 0],
+    ["kWh to:", ["Moc","Energia","Opór","Natężenie"], 1]
+];
+
+const quiz = allQuestions.sort(() => Math.random() - 0.5);
+
+let index = 0;
+let score = 0;
+
+function loadQuestion() {
+    document.getElementById("progress").innerText =
+        "Pytanie " + (index + 1) + " z " + quiz.length;
+
+    const q = quiz[index];
+    document.getElementById("question").innerText = q[0];
+
+    let html = "";
+    q[1].forEach((opt, i) => {
+        html += `<div class="option">
+            <input type="radio" name="opt" value="${i}"> ${opt}
+        </div>`;
+    });
+
+    document.getElementById("options").innerHTML = html;
+}
+
+function nextQuestion() {
+    const selected = document.querySelector("input[name='opt']:checked");
+
+    if (!selected) {
+        alert("Wybierz odpowiedź!");
+        return;
+    }
+
+    const chosen = parseInt(selected.value);
+    const correct = quiz[index][2];
+
+    if (chosen === correct) score++;
+
+    index++;
+
+    if (index < quiz.length) loadQuestion();
+    else showResult();
+}
+
+function showResult() {
+    let message = "";
+
+    if (score == quiz.length) message = "MISTRZ ⚡";
+    else if (score >= 6) message = "Bardzo dobrze 👍";
+    else if (score >= 4) message = "Nieźle 🙂";
+    else message = "Spróbuj ponownie 😅";
+
+    document.querySelector(".container").innerHTML = `
+        <h1>Wynik: ${score}/${quiz.length}</h1>
+        <h2>${message}</h2>
+
+        <div style="text-align:center;">
+            <button onclick="location.reload()">Zagraj ponownie</button>
+            <br><br>
+            <a href="index.html">
+                <button>Strona główna</button>
+            </a>
+        </div>
+    `;
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
