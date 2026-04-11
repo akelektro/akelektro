@@ -68,6 +68,10 @@
             background: #003366;
             color: white;
         }
+        input, textarea {
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
@@ -115,6 +119,26 @@
         E-mail: <b>akelektro@proton.me</b><br>
         Wejherowo i okolice
     </p>
+
+    <h2>Wyślij zapytanie</h2>
+
+    <form action="https://formsubmit.co/TWÓJ_EMAIL" method="POST" style="font-size:18px;">
+        <input type="hidden" name="_captcha" value="false">
+
+        <label>Twoje imię:</label><br>
+        <input type="text" name="Imię" required style="width:100%; padding:10px; margin:8px 0;"><br>
+
+        <label>Telefon (opcjonalnie):</label><br>
+        <input type="text" name="Telefon" style="width:100%; padding:10px; margin:8px 0;"><br>
+
+        <label>Co chcesz mieć zrobione?</label><br>
+        <textarea name="Treść wiadomości" required rows="5" style="width:100%; padding:10px; margin:8px 0;"></textarea><br>
+
+        <button type="submit" style="padding:15px 25px; font-size:18px; background:#003366; color:white; border:none; border-radius:8px; cursor:pointer;">
+            Wyślij wiadomość
+        </button>
+    </form>
+
 </div>
 
 <footer>
