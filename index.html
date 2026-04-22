@@ -10,7 +10,6 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
 
-<!-- CLOUDFLARE TURNSTILE -->
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
 <style>
@@ -78,11 +77,25 @@ header img {
     gap: 20px;
 }
 
+/* 🔥 KLUCZOWA POPRAWKA */
 .card {
     background: white;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.icon {
+    flex-shrink: 0;
+    font-size: 20px;
+}
+
+.text {
+    line-height: 1.4;
 }
 
 .list {
@@ -90,7 +103,6 @@ header img {
     font-size: 18px;
 }
 
-/* FORM */
 input, textarea {
     width: 100%;
     padding: 10px;
@@ -126,11 +138,32 @@ footer {
     <h2>Dlaczego warto nas wybrać?</h2>
 
     <div class="grid">
-        <div class="card">⚡ Szybka realizacja zleceń</div>
-        <div class="card">📜 Uprawnienia SEP E + D </div>
-        <div class="card">📜 Uprawnienia Budowlane w zakresie sieci, instalacji i urządzeń elektrycznych i elektroenergetycznych</div>
-        <div class="card">🔧 Doświadczenie w energetyce</div>
-        <div class="card">✅ Gwarancja na wykonane usługi</div>
+        <div class="card">
+            <span class="icon">⚡</span>
+            <span class="text">Szybka realizacja zleceń</span>
+        </div>
+
+        <div class="card">
+            <span class="icon">📜</span>
+            <span class="text">Uprawnienia SEP E + D</span>
+        </div>
+
+        <div class="card">
+            <span class="icon">📜</span>
+            <span class="text">
+                Uprawnienia Budowlane w zakresie sieci, instalacji i urządzeń elektrycznych i elektroenergetycznych
+            </span>
+        </div>
+
+        <div class="card">
+            <span class="icon">🔧</span>
+            <span class="text">Doświadczenie w energetyce</span>
+        </div>
+
+        <div class="card">
+            <span class="icon">✅</span>
+            <span class="text">Gwarancja na wykonane usługi</span>
+        </div>
     </div>
 </div>
 
@@ -156,7 +189,6 @@ footer {
     </p>
 </div>
 
-<!-- FORMULARZ -->
 <div class="container">
     <h2>Wyślij zapytanie</h2>
 
@@ -173,7 +205,6 @@ footer {
         <label>Wiadomość:</label>
         <textarea name="Treść wiadomości" required></textarea>
 
-        <!-- TURNSTILE -->
         <div class="cf-turnstile" data-sitekey="TWOJ_SITE_KEY"></div>
 
         <button type="submit" class="btn btn-primary">Wyślij</button>
