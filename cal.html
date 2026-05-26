@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kalendarz AK ELEKTRO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+font-family:'Montserrat',sans-serif;
+background:#f4f6f9;
+color:#222;
+}
+
+header{
+background:white;
+text-align:center;
+padding:20px;
+}
+
+header img{
+max-width:260px;
+}
+
+.hero{
+background:linear-gradient(135deg,#003366,#001a33);
+color:white;
+text-align:center;
+padding:60px 20px;
+}
+
+.hero h1{
+font-size:36px;
+margin-bottom:10px;
+}
+
+.hero p{
+font-size:18px;
+margin-bottom:20px;
+}
+
+.btn{
+display:inline-block;
+padding:15px 30px;
+margin:10px;
+font-size:18px;
+border-radius:30px;
+text-decoration:none;
+font-weight:600;
+border:none;
+cursor:pointer;
+}
+
+.btn-primary{
+background:#e00000;
+color:white;
+}
+
+.btn-primary:hover{
+opacity:0.9;
+}
+
+.container{
+max-width:1000px;
+margin:40px auto;
+padding:20px;
+}
+
+.card{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+input{
+width:100%;
+padding:12px;
+margin:15px 0;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:16px;
+box-sizing:border-box;
+}
+
+.kalendarz{
+display:none;
+text-align:center;
+}
+
+.kalendarz img{
+width:100%;
+max-width:1000px;
+border-radius:12px;
+box-shadow:0 5px 15px rgba(0,0,0,.1);
+}
+
+.error{
+display:none;
+margin-top:15px;
+color:red;
+font-weight:bold;
+}
+
+footer{
+text-align:center;
+padding:20px;
+background:#003366;
+color:white;
+margin-top:40px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<img src="logo.png" alt="AK ELEKTRO">
+
+</header>
+
+<section class="hero">
+
+<h1>📅 Kalendarz AK ELEKTRO</h1>
+
+<p>Dostęp zabezpieczony hasłem</p>
+
+<a href="index.html" class="btn btn-primary">
+
+⬅ Powrót do strony głównej
+
+</a>
+
+</section>
+
+<div class="container">
+
+<div class="card" id="loginBox">
+
+<h2>Zaloguj do kalendarza</h2>
+
+<input
+type="password"
+id="password"
+placeholder="Wprowadź hasło">
+
+<button
+class="btn btn-primary"
+onclick="login()">
+
+Zaloguj
+
+</button>
+
+<div
+class="error"
+id="error">
+
+❌ Nieprawidłowe hasło
+
+</div>
+
+</div>
+
+<div
+class="card kalendarz"
+id="calendarBox">
+
+<h2>📅 Kalendarz</h2>
+
+<img
+src="kalendarz.png"
+alt="Kalendarz">
+
+<br><br>
+
+<button
+class="btn btn-primary"
+onclick="logout()">
+
+Wyloguj
+
+</button>
+
+</div>
+
+</div>
+
+<footer>
+
+© 2026 AK ELEKTRO
+
+</footer>
+
+<script>
+
+const PASSWORD="159";
+
+function login(){
+
+const enteredPassword=
+document
+.getElementById("password")
+.value;
+
+if(enteredPassword===PASSWORD){
+
+document
+.getElementById("loginBox")
+.style.display="none";
+
+document
+.getElementById("calendarBox")
+.style.display="block";
+
+sessionStorage.setItem(
+"calendarAccess",
+"true"
+);
+
+}else{
+
+document
+.getElementById("error")
+.style.display="block";
+
+}
+
+}
+
+function logout(){
+
+sessionStorage.removeItem(
+"calendarAccess"
+);
+
+location.reload();
+
+}
+
+window.onload=function(){
+
+if(
+sessionStorage.getItem(
+"calendarAccess"
+)==="true"
+){
+
+document
+.getElementById("loginBox")
+.style.display="none";
+
+document
+.getElementById("calendarBox")
+.style.display="block";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
