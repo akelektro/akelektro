@@ -9,7 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
 
 <style>
-
 body{
 margin:0;
 font-family:'Montserrat',sans-serif;
@@ -98,6 +97,12 @@ width:100%;
 max-width:1000px;
 border-radius:12px;
 box-shadow:0 5px 15px rgba(0,0,0,.1);
+cursor:pointer;
+transition:0.3s;
+}
+
+.kalendarz img:hover{
+transform:scale(1.02);
 }
 
 .error{
@@ -115,36 +120,143 @@ color:white;
 margin-top:40px;
 }
 
-</style>
+.modal{
+display:none;
+position:fixed;
+z-index:9999;
+left:0;
+top:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.95);
+overflow:hidden;
+touch-action:none;
+}
 
+.modal-top{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+z-index:10001;
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+padding:12px;
+box-sizing:border-box;
+background:rgba(0,0,0,0.6);
+flex-wrap:wrap;
+}
+
+.modal-btn{
+background:#e00000;
+color:white;
+border:none;
+border-radius:20px;
+padding:10px 18px;
+font-weight:600;
+cursor:pointer;
+font-family:'Montserrat',sans-serif;
+}
+
+.modal-btn:hover{
+opacity:0.9;
+}
+
+.close{
+position:fixed;
+top:10px;
+right:20px;
+font-size:42px;
+color:white;
+cursor:pointer;
+font-weight:bold;
+z-index:10002;
+}
+
+.close:hover{
+color:#e00000;
+}
+
+.zoom-area{
+width:100%;
+height:100%;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+cursor:grab;
+}
+
+.zoom-area:active{
+cursor:grabbing;
+}
+
+#zoomImage{
+max-width:90%;
+max-height:85%;
+user-select:none;
+-webkit-user-drag:none;
+transform-origin:center center;
+transition:transform 0.05s linear;
+border-radius:12px;
+}
+
+.hint{
+position:fixed;
+bottom:15px;
+left:50%;
+transform:translateX(-50%);
+color:white;
+font-size:14px;
+background:rgba(0,0,0,0.6);
+padding:10px 16px;
+border-radius:20px;
+z-index:10001;
+text-align:center;
+}
+
+@media(max-width:600px){
+.hero h1{
+font-size:28px;
+}
+
+.modal-top{
+padding-right:60px;
+}
+
+.modal-btn{
+padding:8px 12px;
+font-size:13px;
+}
+
+.hint{
+font-size:12px;
+width:85%;
+}
+}
+</style>
 </head>
 
 <body>
 
 <header>
-
 <img src="logo.png" alt="AK ELEKTRO">
-
 </header>
 
 <section class="hero">
-
 <h1>📅 Kalendarz AK ELEKTRO</h1>
-
 <p>Dostęp zabezpieczony hasłem</p>
 
 <a href="index.html" class="btn btn-primary">
-
 ⬅ Powrót do strony głównej
-
 </a>
-
 </section>
 
 <div class="container">
 
 <div class="card" id="loginBox">
-
 <h2>Zaloguj do kalendarza</h2>
 
 <input
@@ -152,120 +264,237 @@ type="password"
 id="password"
 placeholder="Wprowadź hasło">
 
-<button
-class="btn btn-primary"
-onclick="login()">
-
+<button class="btn btn-primary" onclick="login()">
 Zaloguj
-
 </button>
 
-<div
-class="error"
-id="error">
-
+<div class="error" id="error">
 ❌ Nieprawidłowe hasło
-
+</div>
 </div>
 
-</div>
-
-<div
-class="card kalendarz"
-id="calendarBox">
-
+<div class="card kalendarz" id="calendarBox">
 <h2>📅 Kalendarz</h2>
+
+<p>Kliknij kalendarz, aby otworzyć podgląd z zoomem</p>
 
 <img
 src="kalendarz.png"
-alt="Kalendarz">
+alt="Kalendarz"
+onclick="openModal()">
 
 <br><br>
 
-<button
-class="btn btn-primary"
-onclick="logout()">
-
+<button class="btn btn-primary" onclick="logout()">
 Wyloguj
-
 </button>
+</div>
 
+</div>
+
+<div id="imageModal" class="modal">
+
+<span class="close" onclick="closeModal()">&times;</span>
+
+<div class="modal-top">
+<button class="modal-btn" onclick="zoomIn()">+</button>
+<button class="modal-btn" onclick="zoomOut()">-</button>
+<button class="modal-btn" onclick="resetZoom()">Reset</button>
+<button class="modal-btn" onclick="toggleFullscreen()">Pełny ekran</button>
+</div>
+
+<div class="zoom-area" id="zoomArea">
+<img
+id="zoomImage"
+src="kalendarz.png"
+alt="Powiększony kalendarz">
+</div>
+
+<div class="hint">
+Kółko myszy = zoom | Przeciągnij obraz | Na telefonie użyj dwóch palców
 </div>
 
 </div>
 
 <footer>
-
 © 2026 AK ELEKTRO
-
 </footer>
 
 <script>
-
 const PASSWORD="159";
 
-function login(){
+let scale=1;
+let posX=0;
+let posY=0;
 
-const enteredPassword=
-document
-.getElementById("password")
-.value;
+let isDragging=false;
+let startX=0;
+let startY=0;
+
+let initialDistance=0;
+let initialScale=1;
+
+const minScale=1;
+const maxScale=6;
+
+function login(){
+const enteredPassword=document.getElementById("password").value;
 
 if(enteredPassword===PASSWORD){
-
-document
-.getElementById("loginBox")
-.style.display="none";
-
-document
-.getElementById("calendarBox")
-.style.display="block";
-
-sessionStorage.setItem(
-"calendarAccess",
-"true"
-);
-
+document.getElementById("loginBox").style.display="none";
+document.getElementById("calendarBox").style.display="block";
+sessionStorage.setItem("calendarAccess","true");
 }else{
-
-document
-.getElementById("error")
-.style.display="block";
-
+document.getElementById("error").style.display="block";
 }
-
 }
 
 function logout(){
-
-sessionStorage.removeItem(
-"calendarAccess"
-);
-
+sessionStorage.removeItem("calendarAccess");
 location.reload();
+}
 
+function openModal(){
+document.getElementById("imageModal").style.display="block";
+resetZoom();
+}
+
+function closeModal(){
+document.getElementById("imageModal").style.display="none";
+
+if(document.fullscreenElement){
+document.exitFullscreen();
+}
+}
+
+function updateTransform(){
+const img=document.getElementById("zoomImage");
+img.style.transform=
+"translate(" + posX + "px, " + posY + "px) scale(" + scale + ")";
+}
+
+function zoomIn(){
+scale=Math.min(maxScale,scale+0.3);
+updateTransform();
+}
+
+function zoomOut(){
+scale=Math.max(minScale,scale-0.3);
+
+if(scale===1){
+posX=0;
+posY=0;
+}
+
+updateTransform();
+}
+
+function resetZoom(){
+scale=1;
+posX=0;
+posY=0;
+updateTransform();
+}
+
+function toggleFullscreen(){
+const modal=document.getElementById("imageModal");
+
+if(!document.fullscreenElement){
+modal.requestFullscreen();
+}else{
+document.exitFullscreen();
+}
+}
+
+const zoomArea=document.getElementById("zoomArea");
+
+zoomArea.addEventListener("wheel",function(e){
+e.preventDefault();
+
+const zoomSpeed=0.15;
+
+if(e.deltaY<0){
+scale=Math.min(maxScale,scale+zoomSpeed);
+}else{
+scale=Math.max(minScale,scale-zoomSpeed);
+}
+
+if(scale===1){
+posX=0;
+posY=0;
+}
+
+updateTransform();
+},{passive:false});
+
+zoomArea.addEventListener("mousedown",function(e){
+isDragging=true;
+startX=e.clientX-posX;
+startY=e.clientY-posY;
+});
+
+window.addEventListener("mousemove",function(e){
+if(!isDragging) return;
+
+posX=e.clientX-startX;
+posY=e.clientY-startY;
+
+updateTransform();
+});
+
+window.addEventListener("mouseup",function(){
+isDragging=false;
+});
+
+zoomArea.addEventListener("touchstart",function(e){
+if(e.touches.length===1){
+isDragging=true;
+startX=e.touches[0].clientX-posX;
+startY=e.touches[0].clientY-posY;
+}
+
+if(e.touches.length===2){
+isDragging=false;
+initialDistance=getDistance(e.touches[0],e.touches[1]);
+initialScale=scale;
+}
+},{passive:false});
+
+zoomArea.addEventListener("touchmove",function(e){
+e.preventDefault();
+
+if(e.touches.length===1 && isDragging){
+posX=e.touches[0].clientX-startX;
+posY=e.touches[0].clientY-startY;
+updateTransform();
+}
+
+if(e.touches.length===2){
+const currentDistance=getDistance(e.touches[0],e.touches[1]);
+scale=initialScale*(currentDistance/initialDistance);
+
+scale=Math.max(minScale,Math.min(maxScale,scale));
+
+updateTransform();
+}
+},{passive:false});
+
+zoomArea.addEventListener("touchend",function(){
+isDragging=false;
+});
+
+function getDistance(touch1,touch2){
+const dx=touch1.clientX-touch2.clientX;
+const dy=touch1.clientY-touch2.clientY;
+return Math.sqrt(dx*dx+dy*dy);
 }
 
 window.onload=function(){
-
-if(
-sessionStorage.getItem(
-"calendarAccess"
-)==="true"
-){
-
-document
-.getElementById("loginBox")
-.style.display="none";
-
-document
-.getElementById("calendarBox")
-.style.display="block";
-
+if(sessionStorage.getItem("calendarAccess")==="true"){
+document.getElementById("loginBox").style.display="none";
+document.getElementById("calendarBox").style.display="block";
 }
-
 }
-
 </script>
 
 </body>
